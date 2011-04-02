@@ -29,23 +29,25 @@ output reg [3:0] aluControl;
 always @(aluOp,func,shiftDirection)
 begin
 	
-	if(aluOp == 3'd0)
-		aluControl = 4'd0;
+	case(aluOp)
+	
+	3'd0:		aluControl = 4'd0;
 		
-	else if(aluOp == 4'd1)
-		aluControl = 3'd1;
+	3'd1: 	aluControl = 4'd1;
+	
+	3'd2:		aluControl = {1'd0,func[3:0]};
 		
-	else if(aluOp == 4'd2)
-		aluControl = {1'd0,func[3:0]};
-		
-	else if((aluOp == 3'd3) && (shiftDirection == 0))
-		aluControl = 4'd7;
-		
-	else if((aluOp == 3'd3) &&(shiftDirection == 1))
-		aluControl = 4'd6;
-		
-	else if(aluOp == 3'd4)
+	3'd3:
+	begin
+	if (shiftDirection == 1)
+				aluControl = 4'd6;		
+	else if(shiftDirection == 0)
+				aluControl = 4'd7;
+	end
+	
+	3'd4:
 		aluControl = 4'd8;	
-
+		
+	endcase
 end//always
 endmodule
