@@ -55,6 +55,18 @@ begin
 	
 	4'd8:		aluOutput = aluInput1 >>> aluInput2;
 	
-	endcase
+	endcase	
+end//always
+
+always @(aluOutput)
+begin
+	if(aluOutput == 0)
+		zero = 1;
+	else
+		zero = 0;
+	if(aluOutput[15] == 1)
+		less = 1;
+	else 
+		less = 0;
 end//always
 endmodule
