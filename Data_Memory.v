@@ -17,10 +17,10 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module Data_Memory(addra,din,wea,addrb,dout);
+module Data_Memory(addr,din,wea,dout);
 
 //Inputs
-input [15:0] addra,addrb;
+input [15:0] addr;
 input [15:0] din;
 input wea;
 
@@ -36,11 +36,11 @@ reg [15:0] mem0,mem1,mem2,mem3,mem4,mem5,mem6,mem7,mem8,mem9,
 			  mem50,mem51,mem52,mem53,mem54,mem55,mem56,mem57,mem58,mem59,
 			  mem60,mem61,mem62,mem63;
 			  
-always @(addra,din,wea,addrb)
+always @(addr,din,wea)
 begin
 	if(wea)
 	begin
-		case(addra)
+		case(addr)
 			'd0:	mem0 = din;
 			'd1:	mem1 = din;
 			'd2:	mem2 = din;
@@ -107,73 +107,75 @@ begin
 			'd63:	mem63 = din;
 		endcase
 	end//if(wea)
-	
-	case(addrb)
-		'd0:	dout = mem0;
-		'd1:	dout = mem1;
-		'd2:	dout = mem2;
-		'd3:	dout = mem3;
-		'd4:	dout = mem4;
-		'd5:	dout = mem5;
-		'd6:	dout = mem6;
-		'd7:	dout = mem7;
-		'd8:	dout = mem8;
-		'd9:	dout = mem9;
-		'd10:	dout = mem10;
-		'd11:	dout = mem11;
-		'd12:	dout = mem12;
-		'd13:	dout = mem13;
-		'd14:	dout = mem14;
-		'd15:	dout = mem15;
-		'd16:	dout = mem16;
-		'd17:	dout = mem17;
-		'd18:	dout = mem18;
-		'd19:	dout = mem19;
-		'd20:	dout = mem20;
-		'd21:	dout = mem21;
-		'd22:	dout = mem22;
-		'd23:	dout = mem23;
-		'd24:	dout = mem24;
-		'd25:	dout = mem25;
-		'd26:	dout = mem26;
-		'd27:	dout = mem27;
-		'd28:	dout = mem28;
-		'd29:	dout = mem29;
-		'd30:	dout = mem30;
-		'd31:	dout = mem31;
-		'd32:	dout = mem32;
-		'd33:	dout = mem33;
-		'd34:	dout = mem34;
-		'd35:	dout = mem35;
-		'd36:	dout = mem36;
-		'd37:	dout = mem37;
-		'd38:	dout = mem38;
-		'd39:	dout = mem39;
-		'd40:	dout = mem40;
-		'd41:	dout = mem41;
-		'd42:	dout = mem42;
-		'd43:	dout = mem43;
-		'd44:	dout = mem44;
-		'd45:	dout = mem45;
-		'd46:	dout = mem46;
-		'd47:	dout = mem47;
-		'd48:	dout = mem48;
-		'd49:	dout = mem49;
-		'd50:	dout = mem50;
-		'd51:	dout = mem51;
-		'd52:	dout = mem52;
-		'd53:	dout = mem53;
-		'd54:	dout = mem54;
-		'd55:	dout = mem55;
-		'd56:	dout = mem56;
-		'd57:	dout = mem57;
-		'd58:	dout = mem58;
-		'd59:	dout = mem59;
-		'd60:	dout = mem60;
-		'd61:	dout = mem61;
-		'd62:	dout = mem62;
-		'd63:	dout = mem63;
-	endcase
+	else
+	begin
+		case(addr)
+			'd0:	dout = mem0;
+			'd1:	dout = mem1;
+			'd2:	dout = mem2;
+			'd3:	dout = mem3;
+			'd4:	dout = mem4;
+			'd5:	dout = mem5;
+			'd6:	dout = mem6;
+			'd7:	dout = mem7;
+			'd8:	dout = mem8;
+			'd9:	dout = mem9;
+			'd10:	dout = mem10;
+			'd11:	dout = mem11;
+			'd12:	dout = mem12;
+			'd13:	dout = mem13;
+			'd14:	dout = mem14;
+			'd15:	dout = mem15;
+			'd16:	dout = mem16;
+			'd17:	dout = mem17;
+			'd18:	dout = mem18;
+			'd19:	dout = mem19;
+			'd20:	dout = mem20;
+			'd21:	dout = mem21;
+			'd22:	dout = mem22;
+			'd23:	dout = mem23;
+			'd24:	dout = mem24;
+			'd25:	dout = mem25;
+			'd26:	dout = mem26;
+			'd27:	dout = mem27;
+			'd28:	dout = mem28;
+			'd29:	dout = mem29;
+			'd30:	dout = mem30;
+			'd31:	dout = mem31;
+			'd32:	dout = mem32;
+			'd33:	dout = mem33;
+			'd34:	dout = mem34;
+			'd35:	dout = mem35;
+			'd36:	dout = mem36;
+			'd37:	dout = mem37;
+			'd38:	dout = mem38;
+			'd39:	dout = mem39;
+			'd40:	dout = mem40;
+			'd41:	dout = mem41;
+			'd42:	dout = mem42;
+			'd43:	dout = mem43;
+			'd44:	dout = mem44;
+			'd45:	dout = mem45;
+			'd46:	dout = mem46;
+			'd47:	dout = mem47;
+			'd48:	dout = mem48;
+			'd49:	dout = mem49;
+			'd50:	dout = mem50;
+			'd51:	dout = mem51;
+			'd52:	dout = mem52;
+			'd53:	dout = mem53;
+			'd54:	dout = mem54;
+			'd55:	dout = mem55;
+			'd56:	dout = mem56;
+			'd57:	dout = mem57;
+			'd58:	dout = mem58;
+			'd59:	dout = mem59;
+			'd60:	dout = mem60;
+			'd61:	dout = mem61;
+			'd62:	dout = mem62;
+			'd63:	dout = mem63;
+		endcase
+	end//else
 
 end//always
 endmodule
