@@ -18,7 +18,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Control(OpCode,pcsrc1,pcsrc2,regDst,gt_bra,le_bra,eq_bra,memRead,memToReg,aluOp,memWrite,
-					regWrite,jump,seOp,fwdRegSource,IF_ID_Flush,ID_EX_Flush);
+					regWrite,jump,seOp,IF_ID_Flush,ID_EX_Flush);
 
 //Inputs
 input [3:0] OpCode;
@@ -34,7 +34,6 @@ output reg memWrite;
 output reg regWrite;
 output reg jump;
 output reg seOp;
-output reg fwdRegSource;
 output reg IF_ID_Flush,ID_EX_Flush;
 
 wire a,b,c,d;
@@ -84,8 +83,6 @@ begin
 		jump = (~a & ~b & ~c & d);
 		
 		seOp = (a & b & ~c);
-		
-		fwdRegSource = (a & b & c & d);
 					  
 end//always
 
