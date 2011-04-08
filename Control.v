@@ -17,11 +17,12 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module Control(OpCode,regDst,gt_bra,le_bra,eq_bra,memRead,memToReg,aluOp,memWrite,regWrite,jump,
-				   seOp,fwdRegSource);
+module Control(OpCode,pcsrc1,pcsrc2,regDst,gt_bra,le_bra,eq_bra,memRead,memToReg,aluOp,memWrite,
+					regWrite,jump,seOp,IF_ID_Flush,ID_EX_Flush);
 
 //Inputs
 input [3:0] OpCode;
+input pcsrc1,pcsrc2;
 
 //Outputs
 output reg [1:0] regDst;
@@ -33,7 +34,7 @@ output reg memWrite;
 output reg regWrite;
 output reg jump;
 output reg seOp;
-output reg fwdRegSource;
+output reg IF_ID_Flush,ID_EX_Flush;
 
 wire a,b,c,d;
 
@@ -82,10 +83,26 @@ begin
 		jump = (~a & ~b & ~c & d);
 		
 		seOp = (a & b & ~c);
-		
-		fwdRegSource = (a & b & c & d);
 					  
 end//always
 
+always @(pcsrc1,pcsrc2)
+begin
+	if(pcsrc1)
+	begin
+		IF_ID_Flush = 1;
+		ID_EX_Flush = 0;
+	end
+	else if(pcsrc2)
+	begin
+		IF_ID_Flush = 1;
+		ID_EX_Flush = 1;
+	end
+	else
+	begin
+		IF_ID_Flush = 0;
+		ID_EX_Flush = 0;
+	end
 
+end//always
 endmodule
