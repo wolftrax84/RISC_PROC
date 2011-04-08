@@ -105,6 +105,7 @@ begin
 			'd61:	mem61 = din;
 			'd62:	mem62 = din;
 			'd63:	mem63 = din;
+			default:	mem0 = mem0;
 		endcase
 	end//if(wea)
 	else
@@ -174,6 +175,7 @@ begin
 			'd61:	dout = mem61;
 			'd62:	dout = mem62;
 			'd63:	dout = mem63;
+			default:	dout = mem0;
 		endcase
 	end//else
 
