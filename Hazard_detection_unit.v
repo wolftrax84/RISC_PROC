@@ -18,7 +18,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module Hazard_detection_unit(Rs, Rt, Ex_rt, Ex_memread, Mem_memread, Mem_rt, ctrl_flush, PCwrite, Id_write);
+module Hazard_detection_unit(Rs, Rt, Ex_rt, Ex_memread, Mem_memread, Mem_rt, branch, ctrl_flush, PCwrite, Id_write);
 
 //Inputs
 input [2:0] Rs, Rt;
@@ -26,6 +26,7 @@ input [2:0] Ex_rt;
 input [2:0] Mem_rt;
 input Ex_memread;
 input Mem_memread;
+input branch;
 
 
 
@@ -46,7 +47,7 @@ always@(*)
 					end
 			end
 			
-		if(Mem_memread == 1)
+		if(Mem_memread == 1 && branch)
 			begin
 				if((Mem_rt == Rs) || (Mem_rt == Rt))
 					begin
