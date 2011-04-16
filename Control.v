@@ -34,7 +34,7 @@ output memWrite;
 output regWrite;
 output jump;
 output seOp;
-output reg IF_ID_Flush,ID_EX_Flush;
+output IF_ID_Flush,ID_EX_Flush;
 
 wire a,b,c,d;
 
