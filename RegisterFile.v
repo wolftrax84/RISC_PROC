@@ -39,7 +39,7 @@ reg [15:0] t1;
 reg [15:0] a0;
 reg [15:0] a1;
 
-always @(readAddr1,readAddr2,writeEn,writeAddr,writeData)
+always @(reset,readAddr1,readAddr2,writeEn,writeAddr,writeData)
 begin
 
 	if(reset)
@@ -52,6 +52,8 @@ begin
 		t1 = 16'd0;
 		a0 = 16'd0;
 		a1 = 16'd0;
+		readData1 = 0;
+		readData2 = 0;
 	end
 	else
 	begin
