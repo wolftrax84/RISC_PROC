@@ -46,43 +46,43 @@ assign d = OpCode[0];
 always @(OpCode)
 begin
 
-		regDst[0] = (a & b & c & d);
+		regDst[0] <= (a & b & c & d);
 		
-		regDst[1] = (a & ~b & c & d);
+		regDst[1] <= (a & ~b & c & d);
 		
-		gt_bra = (~a & ~b & c & d);
+		gt_bra <= (~a & ~b & c & d);
 		
-		le_bra = (~a & b & ~c & ~d);
+		le_bra <= (~a & b & ~c & ~d);
 		
-		eq_bra = (~a & ~b & c & ~d);
+		eq_bra <= (~a & ~b & c & ~d);
 		
-		memRead = (~a & b & ~c & d)
+		memRead <= (~a & b & ~c & d)
 					 |
 					 (a & ~b & c & d);
 					 
-		memToReg[0] = (~a & b & ~c & d)
+		memToReg[0] <= (~a & b & ~c & d)
 						   |
 							(a & ~b & c & d);
 							
-		memToReg[1] = (a & ~b & c & d);
+		memToReg[1] <= (a & ~b & c & d);
 		
-		aluOp[0] = (~a & ~b & c)
+		aluOp[0] <= (~a & ~b & c)
 					  |
 					  (b & ~c & ~d);
 		
-		aluOp[1] = (a & b & ~c & ~d)
+		aluOp[1] <= (a & b & ~c & ~d)
 						|
 						(a & b & c & d);
 		
-		aluOp[2] = (a & b & ~c & d);
+		aluOp[2] <= (a & b & ~c & d);
 		
-		memWrite = (~a & b & c & ~d);
+		memWrite <= (~a & b & c & ~d);
 		
-		regWrite = (a) |  (b & d);
+		regWrite <= (a) |  (b & d);
 		
-		jump = (~a & ~b & ~c & d);
+		jump <= (~a & ~b & ~c & d);
 		
-		seOp = (a & b & ~c);
+		seOp <= (a & b & ~c);
 					  
 end//always
 
@@ -90,18 +90,18 @@ always @(pcsrc1,pcsrc2)
 begin
 	if(pcsrc1)
 	begin
-		IF_ID_Flush = 1;
-		ID_EX_Flush = 0;
+		IF_ID_Flush <= 1;
+		ID_EX_Flush <= 0;
 	end
 	else if(pcsrc2)
 	begin
-		IF_ID_Flush = 1;
-		ID_EX_Flush = 1;
+		IF_ID_Flush <= 1;
+		ID_EX_Flush <= 1;
 	end
 	else
 	begin
-		IF_ID_Flush = 0;
-		ID_EX_Flush = 0;
+		IF_ID_Flush <= 0;
+		ID_EX_Flush <= 0;
 	end
 
 end//always
