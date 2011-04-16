@@ -25,15 +25,15 @@ input [3:0] OpCode;
 input pcsrc1,pcsrc2;
 
 //Outputs
-output reg [1:0] regDst;
-output reg gt_bra,le_bra,eq_bra;
-output reg memRead;
-output reg [1:0] memToReg;
-output reg [2:0] aluOp;
-output reg memWrite;
-output reg regWrite;
-output reg jump;
-output reg seOp;
+output [1:0] regDst;
+output gt_bra,le_bra,eq_bra;
+output memRead;
+output [1:0] memToReg;
+output [2:0] aluOp;
+output memWrite;
+output regWrite;
+output jump;
+output seOp;
 output reg IF_ID_Flush,ID_EX_Flush;
 
 wire a,b,c,d;
@@ -43,66 +43,46 @@ assign b = OpCode[2];
 assign c = OpCode[1];
 assign d = OpCode[0];
 
-always @(OpCode)
-begin
+assign regDst[0] = (a & b & c & d);
 
-		regDst[0] <= (a & b & c & d);
-		
-		regDst[1] <= (a & ~b & c & d);
-		
-		gt_bra <= (~a & ~b & c & d);
-		
-		le_bra <= (~a & b & ~c & ~d);
-		
-		eq_bra <= (~a & ~b & c & ~d);
-		
-		memRead <= (~a & b & ~c & d)
+assign regDst[1] = (a & ~b & c & d);
+
+assign gt_bra = (~a & ~b & c & d);
+
+assign le_bra = (~a & b & ~c & ~d);		//problem
+
+assign eq_bra = (~a & ~b & c & ~d);		//problem
+
+assign memRead = (~a & b & ~c & d)
 					 |
 					 (a & ~b & c & d);
 					 
-		memToReg[0] <= (~a & b & ~c & d)
+assign memToReg[0] = (~a & b & ~c & d)
 						   |
 							(a & ~b & c & d);
 							
-		memToReg[1] <= (a & ~b & c & d);
-		
-		aluOp[0] <= (~a & ~b & c)
+assign memToReg[1] = (a & ~b & c & d);
+
+assign aluOp[0] = (~a & ~b & c)			//problem
 					  |
 					  (b & ~c & ~d);
-		
-		aluOp[1] <= (a & b & ~c & ~d)
+					  
+assign aluOp[1] = (a & b & ~c & ~d)		//problem
 						|
 						(a & b & c & d);
+						
+assign aluOp[2] = (a & b & ~c & d);
 		
-		aluOp[2] <= (a & b & ~c & d);
+assign memWrite = (~a & b & c & ~d);	//problem
 		
-		memWrite <= (~a & b & c & ~d);
+assign regWrite = (a) |  (b & d);	//problem
 		
-		regWrite <= (a) |  (b & d);
+assign jump = (~a & ~b & ~c & d);
 		
-		jump <= (~a & ~b & ~c & d);
-		
-		seOp <= (a & b & ~c);
-					  
-end//always
+assign seOp = (a & b & ~c);		//problem
 
-always @(pcsrc1,pcsrc2)
-begin
-	if(pcsrc1)
-	begin
-		IF_ID_Flush <= 1;
-		ID_EX_Flush <= 0;
-	end
-	else if(pcsrc2)
-	begin
-		IF_ID_Flush <= 1;
-		ID_EX_Flush <= 1;
-	end
-	else
-	begin
-		IF_ID_Flush <= 0;
-		ID_EX_Flush <= 0;
-	end
+assign IF_ID_Flush = pcsrc1 | pcsrc2;
 
-end//always
+assign ID_EX_Flush = pcsrc2;
+
 endmodule
