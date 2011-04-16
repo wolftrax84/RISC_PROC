@@ -49,25 +49,21 @@ assign regDst[1] = (a & ~b & c & d);
 
 assign gt_bra = (~a & ~b & c & d);
 
-assign le_bra = (~a & b & ~c & ~d);		//problem
+assign le_bra = (~a & b & ~c & ~d);		
 
-assign eq_bra = (~a & ~b & c & ~d);		//problem
+assign eq_bra = (~a & ~b & c & ~d);		
 
-assign memRead = (~a & b & ~c & d)
-					 |
-					 (a & ~b & c & d);
+assign memRead = (~a & b & ~c & d);
 					 
-assign memToReg[0] = (~a & b & ~c & d)
-						   |
-							(a & ~b & c & d);
+assign memToReg[0] = (~a & b & ~c & d);
 							
 assign memToReg[1] = (a & ~b & c & d);
 
-assign aluOp[0] = (~a & ~b & c)			//problem
+assign aluOp[0] = (~a & ~b & c)			
 					  |
 					  (b & ~c & ~d);
 					  
-assign aluOp[1] = (a & b & ~c & ~d)		//problem
+assign aluOp[1] = (a & b & ~c & ~d)		
 						|
 						(a & b & c & d);
 						
