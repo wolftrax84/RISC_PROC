@@ -18,8 +18,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module ControlFlushMux(select,regDst,gt_bra,le_bra,eq_bra,memRead,memToReg,aluOp,memWrite,regWrite,
-							  jump,seOp,fwdRegSource,regDstOut,gt_braOut,le_braOut,eq_braOut,memReadOut,
-							  memToRegOut,aluOpOut,memWriteOut,regWriteOut,jumpOut,seOpOut,fwdRegSourceOut);
+							  jump,seOp,regDstOut,gt_braOut,le_braOut,eq_braOut,memReadOut,
+							  memToRegOut,aluOpOut,memWriteOut,regWriteOut,jumpOut,seOpOut);
 //Input
 input select;
 input [1:0] regDst;
@@ -30,20 +30,18 @@ input [2:0] aluOp;
 input memWrite;
 input regWrite;
 input jump;
-input seOp;
-input fwdRegSource;							  
+input seOp;						  
 							  
 //Outputs
-output [1:0] regDstOut;
-output gt_braOut,le_braOut,eq_braOut;
-output memReadOut;
-output [15:0] memToRegOut;
-output [2:0] aluOpOut;
-output memWriteOut;
-output regWriteOut;
-output jumpOut;
-output seOpOut;
-output fwdRegSourceOut;
+output reg [1:0] regDstOut;
+output reg gt_braOut,le_braOut,eq_braOut;
+output reg memReadOut;
+output reg [15:0] memToRegOut;
+output reg [2:0] aluOpOut;
+output reg memWriteOut;
+output reg regWriteOut;
+output reg jumpOut;
+output reg seOpOut;
 
 always @(*)
 begin
@@ -61,7 +59,6 @@ begin
 			regWriteOut = regWrite;
 			jumpOut = jump;
 			seOpOut = seOp;
-			fwdRegSourceOut = fwdRegSource;
 		end
 		
 		'd1:
@@ -77,7 +74,6 @@ begin
 			regWriteOut = 'd0;
 			jumpOut = 'd0;
 			seOpOut = 'd0;
-			fwdRegSourceOut = 'd0;
 		end
 	endcase	
 end //always

@@ -18,7 +18,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Branch_Logic_Unit(gt_bra,le_bra,eq_bra,equal,zero,less,id_bra_pc,exe_bra_pc,pcsrc,
-									bra_pc
+									bra_pc,pcsrc1,pcsrc2
     );
 	 
 	 input gt_bra,le_bra,eq_bra,equal,zero,less;
@@ -26,17 +26,18 @@ module Branch_Logic_Unit(gt_bra,le_bra,eq_bra,equal,zero,less,id_bra_pc,exe_bra_
 	 output pcsrc;
 	 output reg [5:0] bra_pc;
 	 
+	 output pcsrc1,pcsrc2;
 	 wire temp1,inv_temp1,temp2,temp3;
 	 
 	 //PCSrc1
 	 and(pcsrc1,eq_bra,equal);
 	 
 	 //PCSrc2
-	 assign inv_temp = ~temp;
-	 or(temp, zero, less);
+	 assign inv_temp = ~temp1;
+	 or(temp1, zero, less);
 	 and(temp2, inv_temp, gt_bra);
-	 and(temp3, temp, le_bra);
-	 or(pcsrc1, temp2, temp3);
+	 and(temp3, temp1, le_bra);
+	 or(pcsrc2, temp2, temp3);
 	 
 	 //PCSrc
 	 or(pcsrc,pcsrc1,pcsrc2);

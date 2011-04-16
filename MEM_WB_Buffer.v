@@ -19,17 +19,22 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module MEM_WB_Buffer(clock,reset,mem_mem_out,mem_alu_out,mem_lb_const,mem_fwd_reg,
-							wb_mem_oput,wb_alu_out,wb_lb_const,wb_fwd_reg
+							wb_mem_out,wb_alu_out,wb_lb_const,wb_fwd_reg,mem_memtoreg,mem_regwrite,
+							wb_memtoreg,wb_regwrite,mem_mem_read,wb_mem_read
     );
 	 
 	input clock,reset;
 	input [2:0] mem_fwd_reg;
 	input [7:0] mem_lb_const;
 	input [15:0] mem_mem_out,mem_alu_out;
+	input [1:0] mem_memtoreg;
+	input mem_regwrite,mem_mem_read;
 	
-	output [2:0] wb_fwd_reg;
-	output [7:0] wb_lb_const;
-	output [15:0] wb_mem_out,wb_alu_out;
+	output reg [2:0] wb_fwd_reg;
+	output reg [7:0] wb_lb_const;
+	output reg [15:0] wb_mem_out,wb_alu_out;
+	output reg [1:0] wb_memtoreg;
+	output reg wb_regwrite,wb_mem_read;
 
 	always@(posedge clock) begin
 		if(reset)
@@ -59,5 +64,25 @@ module MEM_WB_Buffer(clock,reset,mem_mem_out,mem_alu_out,mem_lb_const,mem_fwd_re
 			wb_alu_out = mem_alu_out;
 	end
 	
+	always@(posedge clock) begin
+		if(reset)
+			wb_memtoreg = 'd0;
+		else
+			wb_memtoreg = mem_memtoreg;
+	end
+	
+	always@(posedge clock) begin
+		if(reset)
+			wb_regwrite = 'd0;
+		else
+			wb_regwrite = mem_regwrite;
+	end
+	
+	always@(posedge clock) begin
+		if(reset)
+			wb_mem_read = 'd0;
+		else
+			wb_mem_read = mem_mem_read;
+	end
 	
 endmodule

@@ -18,13 +18,14 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module IF_ID_Buffer(clock,if_id_write,if_flush,instruction_in,instr_addr_in,instruction_out,
+module IF_ID_Buffer(clock,reset,if_id_write,if_flush,instruction_in,instr_addr_in,instruction_out,
 							instr_addr_out
     );
 
+	input clock,reset;
 	input if_id_write;
 	input if_flush;
-	input [5:0] instr_addr_out;
+	input [15:0] instr_addr_in;
 	input [15:0] instruction_in;
 	
 	output reg [5:0] instr_addr_out;

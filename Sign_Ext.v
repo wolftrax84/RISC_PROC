@@ -23,7 +23,9 @@ module Sign_Ext(const_in,const_out,SEOp
     );
 	 
 	 input [5:0] const_in;
+	 input SEOp;
 	 output reg [15:0] const_out;
+	 
 	 
 	 always@(*) begin
 		if(SEOp) begin
