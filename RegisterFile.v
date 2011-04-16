@@ -24,7 +24,7 @@ input reset;
 input [2:0] readAddr1,readAddr2;
 input writeEn;
 input [2:0] writeAddr;
-input writeData;
+input [15:0] writeData;
 
 //Outputs
 output reg [15:0] readData1,readData2;
