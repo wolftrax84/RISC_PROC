@@ -21,19 +21,26 @@
 module EXE_MEM_Buffer(clock,reset,exe_alu_out,exe_reg2_val,exe_fwd_reg,exe_lb_const,
 								mem_alu_out,mem_reg2_val,mem_fwd_reg,mem_lb_const,exe_mem_read,
 								exe_mem_write,exe_memtoreg,exe_regwrite,mem_mem_read,mem_mem_write,
-								mem_memtoreg,mem_regwrite
+								mem_memtoreg,mem_regwrite,exe_opcode,mem_opcode,exe_mem_write_data,
+								mem_mem_write_data
     );
 	 
 	input clock,reset;
-	input exe_regwrite;
+	input exe_regwrite,exe_mem_read,exe_mem_write;
 	input [1:0] exe_memtoreg;
 	input [2:0] exe_fwd_reg;
-	input [15:0] exe_alu_out,exe_reg2_val,exe_lb_const,exe_mem_read,exe_mem_write;
+	input [7:0] exe_lb_const;
+	input [15:0] exe_alu_out,exe_reg2_val;
+	input [3:0] exe_opcode;
+	input [15:0] exe_mem_write_data;
 	 
-	output reg mem_regwrite;
+	output reg mem_regwrite,mem_mem_read,mem_mem_write;
 	output reg [1:0] mem_memtoreg;
 	output reg [2:0] mem_fwd_reg;
-	output reg [15:0] mem_alu_out,mem_reg2_val,mem_lb_const,mem_mem_read,mem_mem_write;
+	output reg [7:0] mem_lb_const;
+	output reg [15:0] mem_alu_out,mem_reg2_val;
+	output reg [3:0] mem_opcode;
+	output reg [15:0] mem_mem_write_data;
 	 
 	always@(posedge clock) begin
 		if(reset)
@@ -81,7 +88,7 @@ module EXE_MEM_Buffer(clock,reset,exe_alu_out,exe_reg2_val,exe_fwd_reg,exe_lb_co
 		if(reset)
 			mem_mem_write = 'd0;
 		else
-			mem_mem_write = exe_fwd_reg;
+			mem_mem_write = exe_mem_write;
 	end
 	
 	always@(posedge clock) begin
@@ -91,5 +98,18 @@ module EXE_MEM_Buffer(clock,reset,exe_alu_out,exe_reg2_val,exe_fwd_reg,exe_lb_co
 			mem_regwrite = exe_regwrite;
 	end
 
+	always@(posedge clock) begin
+		if(reset)
+			mem_opcode = 'd0;
+		else
+			mem_opcode = exe_opcode;
+	end
+	
+	always@(posedge clock) begin
+		if(reset)
+			mem_mem_write_data = 'd0;
+		else
+			mem_mem_write_data = exe_mem_write_data;
+	end
 	
 endmodule

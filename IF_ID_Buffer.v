@@ -28,24 +28,28 @@ module IF_ID_Buffer(clock,reset,if_id_write,if_flush,instruction_in,instr_addr_i
 	input [15:0] instr_addr_in;
 	input [15:0] instruction_in;
 	
-	output reg [5:0] instr_addr_out;
+	output reg [15:0] instr_addr_out;
 	output reg [15:0] instruction_out;
 	
-	always@(posedge clock or posedge if_id_write or posedge if_flush) begin
-		if(if_id_write)
-			instruction_out = instruction_out;
+	always@(posedge clock) begin
+		if(reset)
+			instruction_out <= 'd0;
+		else if(if_id_write == 'd0)
+			instruction_out <= instruction_out;
 		else if(if_flush)
-			instruction_out = 'd0;
+			instruction_out <= 'd0;
 		else
-			instruction_out = instruction_in;
+			instruction_out <= instruction_in;
 	end
 	
-	always@(posedge clock or posedge if_id_write or posedge if_flush) begin
-		if(if_id_write)
-			instr_addr_out = instr_addr_out;
+	always@(posedge clock) begin
+		if(reset)
+			instr_addr_out <= 'd0;
+		else if(if_id_write == 'd0)
+			instr_addr_out <= instr_addr_out;
 		else if(if_flush)
-			instr_addr_out = 'd0;
+			instr_addr_out <= 'd0;
 		else
-			instr_addr_out = instr_addr_in;
+			instr_addr_out <= instr_addr_in;
 	end
 endmodule

@@ -41,6 +41,9 @@ output reg Id_write;
 
 always@(*)
 	begin
+		ctrl_flush = 'd0;
+		PCwrite = 'd1;
+		Id_write = 'd1;
 		if(Ex_memread == 1)
 			begin 
 				if((Ex_rt == Rs) || (Ex_rt == Rt))

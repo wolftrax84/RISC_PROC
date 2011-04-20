@@ -26,12 +26,10 @@ module Mux_2(control,in_1,in_2,out
 	output reg [15:0] out;
 	
 	always@(*) begin
-		if(control == 'd0)
-			out <= in_1;
-		else if(control == 'd1)
+		if(control == 'd1)
 			out <= in_2;
 		else
-			out <= 'd0;
+			out <= in_1;
 	end
 
 endmodule

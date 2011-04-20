@@ -30,9 +30,14 @@ wire MemRead,id_MemRead,exe_MemRead,mem_MemRead,MemWrite,id_MemWrite,exe_MemWrit
 wire RegWrite,id_RegWrite,exe_RegWrite,mem_RegWrite,wb_RegWrite;
 wire jump,id_jump,seOp,id_seOp;
 wire ifid_flush,idexe_flush;
-wire [1:0] id_RegDst,exe_RegDst,id_MemtoReg,exe_MemtoReg,mem_MemtoReg,wb_MemtoReg;
-wire [2:0] id_ALUOp,exe_ALUOp;
+wire [1:0] RegDst,id_RegDst,exe_RegDst,MemtoReg,id_MemtoReg,exe_MemtoReg,mem_MemtoReg,wb_MemtoReg;
+wire [2:0] ALUOp,id_ALUOp,exe_ALUOp;
 
+wire [1:0] mem_write_sel;
+wire [3:0] exe_opcode,mem_opcode;
+wire [15:0] lb_mux_out,mem_write_data,mem_mem_write_data;
+
+wire [15:0] id_bra_pc;
 wire [15:0] next_pc_in,bra_pc,next_instr_addr;
 wire [15:0] if_instr_addr,id_instr_addr;
 wire PCSrc,PCSrc1,PCSrc2,PCWrite;
@@ -49,12 +54,13 @@ wire [7:0] exe_lb_const,mem_lb_const,wb_lb_const;
 wire [15:0] exe_se_const;
 
 wire [1:0] reg1_mux_sel,reg2_mux_sel;
-wire [15:0] alu_input1,alu_input2,exe_alu_out,mem_alu_out;
+wire [15:0] alu_input1,alu_input2,exe_alu_out,mem_alu_out,wb_alu_out;
 wire [3:0] alu_control;
 wire alu_zero,alu_less;
 wire [15:0] mem_reg2_val;
 wire [15:0] mem_mem_out,wb_mem_out;
-Adder_2 Bra_Adder(.in_1(id_instr_addr),.in_2(id_se_const));
+
+
 
 //////////////////////////////////////////////////////////////////////////////////
 //
@@ -62,11 +68,11 @@ Adder_2 Bra_Adder(.in_1(id_instr_addr),.in_2(id_se_const));
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-pc_mux PC_mux(.control({id_jump,PCSrc}),.in_1(next_pc_in),.in_2(bra_pc),.in_3({next_pc_in[15:12],id_instruction[12:0]}),.out(next_instr_addr));
+mux_3 PC_mux(.control({id_jump,PCSrc}),.in_1(next_pc_in),.in_2(bra_pc),.in_3({next_pc_in[15:12],id_instruction[11:0]}),.out(next_instr_addr));
 
 Reg_16 PC(.clock(clock),.reset(reset),.d(next_instr_addr),.q(if_instr_addr),.en(PCWrite));
 
-Adder_2 PC_adder(.in_1(if_instr_addr),.in_2('d1),.out(next_pc_in));
+Adder_2 PC_adder(.in_1(if_instr_addr),.in_2(16'd1),.out(next_pc_in));
 
 Instruction_Memory i_instr_mem(.address(if_instr_addr),.out(if_instruction));
 
@@ -79,11 +85,11 @@ IF_ID_Buffer if_id_buf(.clock(clock),.reset(reset),.if_id_write(if_id_write),.if
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-RegisterFile i_reg_file(.readAddr1(id_instruction[11:9]),.readAddr2(id_instruction[8:6]),.readData1(id_reg1_val),
+RegisterFile i_reg_file(.reset(reset),.readAddr1(id_instruction[11:9]),.readAddr2(id_instruction[8:6]),.readData1(id_reg1_val),
 								.readData2(id_reg2_val),.writeEn(wb_RegWrite),.writeAddr(wb_fwd_reg),.writeData(regWrite_val)
 								);
 								
-								
+Adder_2 Bra_Adder(.in_1(id_instr_addr),.in_2(id_se_const),.out(id_bra_pc));								
 								
 Sign_Ext i_sign_ext(.const_in(id_instruction[5:0]),.const_out(id_se_const),.SEOp(id_seOp));
 
@@ -93,7 +99,7 @@ Control i_control_unit(.OpCode(id_instruction[15:12]),.regDst(RegDst),.gt_bra(gt
 
 Hazard_detection_unit i_haz_dec_unit(.Rs(id_instruction[11:9]),.Rt(id_instruction[8:6]),.Ex_rt(exe_rt),.Ex_memread(exe_MemRead),
 													.Mem_memread(mem_MemRead),.Mem_rt(mem_fwd_reg),.Wb_rt(wb_fwd_reg),.Wb_memread(wb_MemRead),
-													.brlegt(PCSrc2),.breq(PCScr1),.ctrl_flush(ctrl_flush),.PCwrite(PCWrite),.Id_write(if_id_write));
+													.brlegt(PCSrc2),.breq(PCSrc1),.ctrl_flush(ctrl_flush),.PCwrite(PCWrite),.Id_write(if_id_write));
 												
 ControlFlushMux i_ctrl_flush_mux(.select(ctrl_flush),.regDst(RegDst),.gt_bra(gt_bra),.le_bra(le_bra),.eq_bra(eq_bra),.memRead(MemRead),
 											.memToReg(MemtoReg),.aluOp(ALUOp),.memWrite(MemWrite),.regWrite(RegWrite),.jump(jump),.seOp(seOp),
@@ -101,7 +107,7 @@ ControlFlushMux i_ctrl_flush_mux(.select(ctrl_flush),.regDst(RegDst),.gt_bra(gt_
 											.memReadOut(id_MemRead),.memToRegOut(id_MemtoReg),.aluOpOut(id_ALUOp),.memWriteOut(id_MemWrite),
 											.regWriteOut(id_RegWrite),.jumpOut(id_jump),.seOpOut(id_seOp));
 
-RegisterCompare i_reg_compare(.reg1(reg1_val),.reg2(reg2_val),.equal(comp_equal));
+RegisterCompare i_reg_compare(.reg1(id_reg1_val),.reg2(id_reg2_val),.equal(comp_equal));
 
 ID_EXE_Buffer i_id_exe_buf(.clock(clock),.reset(reset),.id_bra_pc(id_bra_pc),.id_reg1_val(id_reg1_val),.id_reg2_val(id_reg2_val),
 									.id_rs(id_instruction[11:9]),.id_rt(id_instruction[8:6]),.id_rd(id_instruction[5:3]),
@@ -111,7 +117,8 @@ ID_EXE_Buffer i_id_exe_buf(.clock(clock),.reset(reset),.id_bra_pc(id_bra_pc),.id
 									.id_le_bra(id_le_bra),.id_alu_op(id_ALUOp),.id_reg_dst(id_RegDst),.id_mem_read(id_MemRead),
 									.id_mem_write(id_MemWrite),.id_memtoreg(id_MemtoReg),.id_regwrite(id_RegWrite),.exe_gt_bra(exe_gt_bra),
 									.exe_le_bra(exe_le_bra),.exe_alu_op(exe_ALUOp),.exe_reg_dst(exe_RegDst),.exe_mem_read(exe_MemRead),
-									.exe_mem_write(exe_MemWrite),.exe_memtoreg(exe_MemtoReg),.exe_regwrite(exe_RegWrite)
+									.exe_mem_write(exe_MemWrite),.exe_memtoreg(exe_MemtoReg),.exe_regwrite(exe_RegWrite),.id_opcode(id_instruction[15:12]),
+									.exe_opcode(exe_opcode),.flush(idexe_flush)
 					);
 //////////////////////////////////////////////////////////////////////////////////
 //
@@ -122,13 +129,13 @@ ID_EXE_Buffer i_id_exe_buf(.clock(clock),.reset(reset),.id_bra_pc(id_bra_pc),.id
 Reg_Dest_Mux i_reg_dest_mux(.rs(exe_rs),.rt(exe_rt),.rd(exe_rd),
 										.write_addr(exe_fwd_reg),.regDest(exe_RegDst));
 
-ALU_Reg1_Mux i_reg1_mux(.sel(reg1_mux_sel),.reg1_val(exe_reg1_val),.mem_forward(mem_alu_out),.wb_forward(regWrite_val),
+ALU_Reg1_Mux i_reg1_mux(.sel(reg1_mux_sel),.reg1_val(exe_reg1_val),.mem_forward(lb_mux_out),.wb_forward(regWrite_val),
 								.alu_val1(alu_input1));
 								
-ALU_Reg2_Mux i_reg2_mux(.sel(reg2_mux_sel),.reg2_val(exe_reg2_val),.mem_forward(mem_alu_out),.wb_forward(regWrite_val),
+ALU_Reg2_Mux i_reg2_mux(.sel(reg2_mux_sel),.reg2_val(exe_reg2_val),.mem_forward(lb_mux_out),.wb_forward(regWrite_val),
 								.alu_val2(alu_input2),.se_const(exe_se_const));
 		
-ALU_Control i_alu_constrol(.aluOp(exe_ALUOp),.func(exe_lb_const[2:0]),.shiftDirection(exe_lb_const[0]),.aluControl(alu_control));
+ALU_Control i_alu_control(.aluOp(exe_ALUOp),.func(exe_lb_const[2:0]),.shiftDirection(exe_lb_const[0]),.aluControl(alu_control));
 		
 ALU i_alu(.aluInput1(alu_input1),.aluInput2(alu_input2),.aluControl(alu_control),.aluOutput(exe_alu_out),.zero(alu_zero),.less(alu_less));
 
@@ -137,13 +144,15 @@ Branch_Logic_Unit i_bra_log_unit(.gt_bra(exe_gt_bra),.le_bra(exe_le_bra),.eq_bra
 											.exe_bra_pc(exe_bra_pc),.pcsrc(PCSrc),.bra_pc(bra_pc),.pcsrc1(PCSrc1),.pcsrc2(PCSrc2));
 											
 Forwarding_unit i_forwarding_unit(.Rs(exe_rs),.Rt(exe_rt),.Exmem_rd(mem_fwd_reg),.Memwb_rd(wb_fwd_reg),.Exmem_reg_write(mem_RegWrite),
-												.Memwb_reg_write(wb_RegWrite),.Alu_src1(reg1_mux_sel),.Alu_src2(reg2_mux_sel));
+												.Memwb_reg_write(wb_RegWrite),.Alu_src1(reg1_mux_sel),.Alu_src2(reg2_mux_sel),.EXE_OPCode(exe_opcode),
+												.MEM_OPCode(mem_opcode),.lb_mux_sel(lb_mux_sel),.mem_write_sel(mem_write_sel));
 											
 EXE_MEM_Buffer i_exe_mem_buf(.clock(clock),.reset(reset),.exe_alu_out(exe_alu_out),.exe_reg2_val(exe_reg2_val),.exe_fwd_reg(exe_fwd_reg),
 					.exe_lb_const(exe_lb_const),.mem_alu_out(mem_alu_out),.mem_reg2_val(mem_reg2_val),.mem_fwd_reg(mem_fwd_reg),
 					.mem_lb_const(mem_lb_const),.exe_mem_read(exe_MemRead),.exe_mem_write(exe_MemWrite),.exe_memtoreg(exe_MemtoReg),
 					.exe_regwrite(exe_RegWrite),.mem_mem_read(mem_MemRead),.mem_mem_write(mem_MemWrite),.mem_memtoreg(mem_MemtoReg),
-					.mem_regwrite(mem_RegWrite)
+					.mem_regwrite(mem_RegWrite),.exe_opcode(exe_opcode),.mem_opcode(mem_opcode),.exe_mem_write_data(mem_write_data),
+					.mem_mem_write_data(mem_mem_write_data)
     );
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -152,8 +161,11 @@ EXE_MEM_Buffer i_exe_mem_buf(.clock(clock),.reset(reset),.exe_alu_out(exe_alu_ou
 //
 //////////////////////////////////////////////////////////////////////////////////
 
+Mux_2 lb_mux(.control(lb_mux_sel),.in_1(mem_alu_out),.in_2({8'd0,mem_lb_const}),.out(lb_mux_out));
 
-Data_Memory	i_data_mem(.addr(mem_alu_out),.din(mem_reg2_val),.dout(mem_mem_out),.wea(MemWrite));
+mux_3 data_write_mux(.control(mem_write_sel),.in_1(mem_reg2_val),.in_2(lb_mux_out),.in_3(regWrite_val),.out(mem_write_data));
+
+Data_Memory	i_data_mem(.reset(reset),.addr(mem_alu_out),.din(mem_mem_write_data),.dout(mem_mem_out),.wea(mem_MemWrite));
 
 
 MEM_WB_Buffer i_mem_wb_buf(.clock(clock),.reset(reset),.mem_mem_out(mem_mem_out),.mem_alu_out(mem_alu_out),.mem_lb_const(mem_lb_const),
@@ -169,6 +181,8 @@ MEM_WB_Buffer i_mem_wb_buf(.clock(clock),.reset(reset),.mem_mem_out(mem_mem_out)
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-Mux_2 wb_mux(.control(wb_MemtoReg),.in_1(wb_alu_out),.in_2(wb_mem_out),.out(regWrite_val));
+mux_3 wb_mux(.control(wb_MemtoReg),.in_1(wb_alu_out),.in_2(wb_mem_out),.in_3({8'd0,wb_lb_const}),.out(regWrite_val));
+
+
 
 endmodule

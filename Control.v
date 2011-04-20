@@ -77,7 +77,7 @@ assign jump = (~a & ~b & ~c & d);
 		
 assign seOp = (a & b & ~c);		//problem
 
-assign IF_ID_Flush = pcsrc1 | pcsrc2;
+assign IF_ID_Flush = pcsrc1 | pcsrc2 | (~a & ~b & ~c & d);
 
 assign ID_EX_Flush = pcsrc2;
 

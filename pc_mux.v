@@ -18,7 +18,7 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module pc_mux(control,in_1,in_2,in_3,out
+module mux_3(control,in_1,in_2,in_3,out
     );
 	
 	input [1:0] control;
@@ -27,14 +27,13 @@ module pc_mux(control,in_1,in_2,in_3,out
 	output reg [15:0] out;
 	
 	always@(*) begin
-		if(control == 'd0)
-			out <= in_1;
-		else if(control == 'd1)
-			out <= in_2;
-		else if(control[1] == 'd1)
+		if(control[1] == 'd1)
 			out <= in_3;
 		else
-			out <= 'd0;
+			if(control == 'd0)
+				out <= in_1;
+			else
+				out <= in_2;
 	end
 
 endmodule

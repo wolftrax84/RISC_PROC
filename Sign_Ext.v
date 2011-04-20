@@ -33,7 +33,7 @@ module Sign_Ext(const_in,const_out,SEOp
 		end
 		else begin
 			if(const_in[5] == 'd1)
-				const_out = {10'h3FF,const_in[5:1]};
+				const_out = {10'h3FF,const_in[5:0]};
 			else
 				const_out = {10'd0,const_in[5:0]};
 		end
